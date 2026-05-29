@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Pneumonia Detection System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a237e 0%, #1565c0 50%, #0288d1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 900px;
+            min-height: 520px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+        }
+
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(180deg, #0d47a1 0%, #01579b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: white;
+        }
+
+        .left-panel .icon { font-size: 70px; margin-bottom: 20px; }
+
+        .left-panel h1 {
+            font-size: 22px; font-weight: 700;
+            text-align: center; margin-bottom: 12px; line-height: 1.3;
+        }
+
+        .left-panel p {
+            font-size: 13px; text-align: center;
+            opacity: 0.85; line-height: 1.6;
+        }
+
+        .features { margin-top: 30px; width: 100%; }
+
+        .feature-item {
+            display: flex; align-items: center;
+            gap: 10px; margin-bottom: 12px;
+            font-size: 13px; opacity: 0.9;
+        }
+
+        .feature-item span.dot {
+            width: 8px; height: 8px;
+            background: #64b5f6; border-radius: 50%; flex-shrink: 0;
+        }
+
+        .right-panel {
+            flex: 1; background: #ffffff;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 50px 45px;
+        }
+
+        .right-panel h2 {
+            font-size: 26px; color: #1a237e;
+            font-weight: 700; margin-bottom: 6px;
+        }
+
+        .right-panel .subtitle {
+            font-size: 13px; color: #888; margin-bottom: 30px;
+        }
+
+        .alert {
+            width: 100%; padding: 10px 14px;
+            border-radius: 8px; margin-bottom: 16px; font-size: 13px;
+        }
+
+        .alert-danger  { background: #fdecea; color: #c62828; border-left: 4px solid #e53935; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; border-left: 4px solid #43a047; }
+
+        .form-group { width: 100%; margin-bottom: 18px; }
+
+        .form-group label {
+            display: block; font-size: 13px;
+            font-weight: 600; color: #444; margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%; padding: 12px 16px;
+            border: 2px solid #e0e0e0; border-radius: 10px;
+            font-size: 14px; color: #333;
+            transition: border-color 0.3s; outline: none;
+        }
+
+        .form-group input:focus { border-color: #1565c0; }
+
+        .btn-login {
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #1565c0, #0288d1);
+            color: white; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: 600;
+            cursor: pointer; transition: opacity 0.3s; margin-top: 5px;
+        }
+
+        .btn-login:hover { opacity: 0.9; }
+
+        .signup-link { margin-top: 20px; font-size: 13px; color: #666; }
+
+        .signup-link a {
+            color: #1565c0; font-weight: 600; text-decoration: none;
+        }
+
+        .signup-link a:hover { text-decoration: underline; }
+
+        .divider {
+            width: 100%; text-align: center;
+            border-top: 1px solid #eee; margin: 20px 0; position: relative;
+        }
+
+        .divider span {
+            position: absolute; top: -10px; left: 50%;
+            transform: translateX(-50%); background: white;
+            padding: 0 10px; font-size: 12px; color: #aaa;
+        }
+
+        .default-creds {
+            width: 100%; background: #f0f4ff;
+            border-radius: 8px; padding: 10px 14px;
+            font-size: 12px; color: #555; text-align: center;
+        }
+
+        .default-creds strong { color: #1565c0; }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+
+    <!-- Left Panel -->
+    <div class="left-panel">
+        <div class="icon">🫁</div>
+        <h1>Pneumonia Detection System</h1>
+        <p>AI-powered chest X-ray analysis for faster, more accurate diagnosis</p>
+        <div class="features">
+            <div class="feature-item"><span class="dot"></span> 5 Deep Learning Models</div>
+            <div class="feature-item"><span class="dot"></span> Grad-CAM Explainability</div>
+            <div class="feature-item"><span class="dot"></span> Patient Record Management</div>
+            <div class="feature-item"><span class="dot"></span> PDF Report Export</div>
+            <div class="feature-item"><span class="dot"></span> Real-time Predictions</div>
+        </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+        <h2>Doctor Portal</h2>
+        <p class="subtitle">Sign in to access the system</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST" style="width:100%">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email"
+                       placeholder="doctor@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div style="position: relative;">
+                    <input type="password" name="password" id="passwordInput"
+                           placeholder="Enter your password" required
+                           style="width:100%; padding:12px 44px 12px 16px;
+                                  border:2px solid #e0e0e0; border-radius:10px;
+                                  font-size:14px; color:#333; outline:none;
+                                  transition: border-color 0.3s;">
+                    <button type="button" onclick="togglePassword()"
+                            style="position:absolute; right:12px; top:50%;
+                                   transform:translateY(-50%); background:none;
+                                   border:none; cursor:pointer; color:#888;
+                                   padding:0; display:flex; align-items:center;">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg"
+                             width="20" height="20" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0
+                                     8.268 2.943 9.542 7-1.274 4.057-5.064
+                                     7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn-login">🔐 Sign In</button>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="default-creds">
+            Default: <strong>doctor@fyp.com</strong> /
+            <strong>doctor123</strong>
+        </div>
+
+        <p class="signup-link">
+            Don't have an account?
+            <a href="{{ url_for('signup') }}">Create Account</a>
+        </p>
+    </div>
+
+</div>
+
+<script>
+    function togglePassword() {
+        const input   = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478
+                         0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029
+                         m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242
+                         4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29
+                         M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0
+                         8.268 2.943 9.543 7a10.025 10.025 0 01-4.132
+                         5.411m0 0L21 21"/>`;
+        } else {
+            input.type = 'password';
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0
+                         8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542
+                         7-4.477 0-8.268-2.943-9.542-7z"/>`;
+        }
+    }
+</script>
+
+</body>
+</html>

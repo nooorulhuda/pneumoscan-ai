@@ -10,15 +10,16 @@ from tensorflow import keras
 from tensorflow.keras import layers
 import cv2
 from datetime import datetime
-from fpdf import FPDF
+from fpdf import FPDF 
 import io
 
 app = Flask(__name__)
 app.secret_key = 'pneumonia_fyp_secret_key_2024'
 
-UPLOAD_FOLDER      = 'static/uploads'
-GRADCAM_FOLDER     = 'static/gradcam'
-MODELS_FOLDER      = r'C:\fyp\h5.files'
+BASE_DIR       = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER  = os.path.join(BASE_DIR, 'static', 'uploads')
+GRADCAM_FOLDER = os.path.join(BASE_DIR, 'static', 'gradcam')
+MODELS_FOLDER  = r'C:\fyp\h5.files'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app.config['UPLOAD_FOLDER']  = UPLOAD_FOLDER
@@ -44,7 +45,7 @@ def load_user(user_id):
     return None
 
 def get_db():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect(os.path.join(BASE_DIR, 'database.db'))
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -273,13 +274,15 @@ def upload():
 
         if file and allowed_file(file.filename):
             filename   = secure_filename(f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{file.filename}")
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            image_path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(image_path)
 
             label, confidence = predict(image_path, model_name)
 
             gradcam_filename = f"gradcam_{filename}"
-            gradcam_path     = os.path.join(app.config['GRADCAM_FOLDER'], gradcam_filename)
+            os.makedirs(GRADCAM_FOLDER, exist_ok=True)
+            gradcam_path = os.path.join(GRADCAM_FOLDER, gradcam_filename)
             generate_gradcam(image_path, model_name, gradcam_path)
 
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -336,8 +339,8 @@ def download_pdf(record_id):
     record = conn.execute('SELECT * FROM patients WHERE id=?', (record_id,)).fetchone()
     conn.close()
 
-    img_full_path     = os.path.join(app.config['UPLOAD_FOLDER'],  record['image_path'])
-    gradcam_full_path = os.path.join(app.config['GRADCAM_FOLDER'], record['gradcam_path'])
+    img_full_path     = os.path.join(UPLOAD_FOLDER,  record['image_path'])
+    gradcam_full_path = os.path.join(GRADCAM_FOLDER, record['gradcam_path'])
 
     pdf = FPDF()
     pdf.add_page()
@@ -441,5 +444,7 @@ def profile():
     return render_template('profile.html')
 
 if __name__ == '__main__':
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(GRADCAM_FOLDER, exist_ok=True)
     init_db()
     app.run(debug=True)
